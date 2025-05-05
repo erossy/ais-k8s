@@ -1,0 +1,36 @@
+---
+- name: Create 1TB RAM disk on storage nodes
+  hosts: storage-nodes
+  become: true
+  tasks:
+    - name: Create mount point directory
+      file:
+        path: /mnt/ramdisk
+        state: directory
+        mode: '0755'
+      
+    - name: Check if RAM disk is already mounted
+      shell: mount | grep "/mnt/ramdisk"
+      register: mount_check
+      failed_when: false
+      changed_when: false
+
+    - name: Mount 1TB RAM disk
+      mount:
+        path: /mnt/ramdisk
+        src: tmpfs
+        fstype: tmpfs
+        opts: "size=1024G,mode=1777"
+        state: mounted
+      when: mount_check.rc != 0
+      
+    - name: Add RAM disk to /etc/fstab for persistence
+      lineinfile:
+        path: /etc/fstab
+        line: "tmpfs    /mnt/ramdisk    tmpfs    defaults,size=1024G,mode=1777    0 0"
+        state: present
+      
+    - name: Verify RAM disk is mounted correctly
+      shell: df -h | grep /mnt/ramdisk
+      register: verify_mount
+      changed_when: false
