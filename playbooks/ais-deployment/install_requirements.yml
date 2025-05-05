@@ -1,3 +1,9 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600  # Optional: considers the cache valid if updated within last hour
+  become: yes
+
 - name: Install requirements on localhost
   hosts: localhost
   gather_facts: no
