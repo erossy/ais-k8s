@@ -1,9 +1,23 @@
+- name: Update and fix package repositories
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    force_apt_get: yes
+  become: yes
+
+- name: Fix missing packages
+  ansible.builtin.command: apt-get update --fix-missing
+  become: yes
+  changed_when: false
+
 - name: Ensure Python 3 and pip are installed
-  ansible.builtin.package:
+  ansible.builtin.apt:
     name:
       - python3
       - python3-pip
     state: present
+    install_recommends: yes
+  become: yes
 
 - name: Upgrade pip to the latest version
   ansible.builtin.pip:
