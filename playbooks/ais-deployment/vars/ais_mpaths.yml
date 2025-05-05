@@ -11,8 +11,8 @@
 #
 
 # ---
-# ais_mpaths:
-#   - "/ais/sda"
+ais_mpaths:
+   - "/mnt/ramdisk"
 #   - "/ais/sdb"
 #   - "/ais/sdc"
 #   - "/ais/sdd"
@@ -23,5 +23,5 @@
 #   - "/ais/sdi"
 #   - "/ais/sdj"
 #
-# ais_mpath_size: 9Ti
+ais_mpath_size: 1Ti
 #
