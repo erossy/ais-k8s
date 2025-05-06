@@ -1,4 +1,3 @@
-    
 - name: Confirm systemd drop-in overwrite
   ansible.builtin.pause:
     prompt: "This playbook will overwrite the kubelet extra args configuration if it is running as a systemd service.
@@ -11,5 +10,4 @@
     src: "kubelet-extra-args.conf"
     dest: "{{ kubelet_systemd_path }}/kubelet-extra-args.conf"
     mode: "644"
-  when: user_confirm
-
+  when: user_confirm.user_input | default('') | lower == 'yes'
