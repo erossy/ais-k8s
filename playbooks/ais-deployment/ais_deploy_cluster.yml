@@ -9,6 +9,18 @@
     - k8s_namespace: "{{cluster}}"
 
   pre_tasks:
+
+    - name: Ensure correct Kubernetes context
+      shell: kubectl config use-context nebius-mk8s-jade-butterfly-cluster-8
+      register: kubectl_context
+      changed_when: false
+      
+    - name: Verify connection to Kubernetes API server
+      shell: kubectl cluster-info
+      register: cluster_info
+      changed_when: false
+      failed_when: "'https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443' not in cluster_info.stdout"
+  
     - name: Validate if ais_mpaths is defined
       fail:
         msg: "Variable 'ais_mpaths' not found. Refer to https://github.com/NVIDIA/ais-k8s/tree/main/docs#aistore-cluster-creation-process and populate the var in 'ais_mpaths.yml'"
