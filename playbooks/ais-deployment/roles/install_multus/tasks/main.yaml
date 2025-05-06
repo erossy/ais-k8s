@@ -12,7 +12,7 @@
     msg: "Multus is {{ 'already' if multus_running else 'not' }} running. {{ 'Skipping install' if multus_running else 'Installing latest...' }}"
 
 - name: Install multus if necessary
-  shell: kubectl apply -f "{{ multus_url }}"
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 apply -f "{{ multus_url }}"
   when: not multus_running
 
 # https://github.com/k8snetworkplumbingwg/whereabouts

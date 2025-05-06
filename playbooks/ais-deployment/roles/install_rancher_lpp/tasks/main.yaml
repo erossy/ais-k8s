@@ -1,2 +1,2 @@
 - name: Install Rancher's local path provisioner (https://github.com/rancher/local-path-provisioner)
-  shell: kubectl apply -f "{{ lpp_url }}"
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 apply -f "{{ lpp_url }}"

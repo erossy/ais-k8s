@@ -20,7 +20,7 @@
     dest: "{{ target_dir }}/credentials"
 
 - name: Delete existing kubernetes secret
-  shell: kubectl delete secret {{ secret_name }} -n ais --ignore-not-found
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 delete secret {{ secret_name }} -n ais --ignore-not-found
     
 - name: Create kubernetes secret
   shell: "kubectl create secret -n ais generic {{ secret_name }} \

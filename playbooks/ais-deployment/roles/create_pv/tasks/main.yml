@@ -25,7 +25,7 @@
   when: new_node is not defined and node_name is defined
 
 - name: Label nodes
-  shell: kubectl label nodes {{ nodes }} nvidia.com/ais-proxy="{{ cluster }}" nvidia.com/ais-target="{{ cluster }}"
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 label nodes {{ nodes }} nvidia.com/ais-proxy="{{ cluster }}" nvidia.com/ais-target="{{ cluster }}"
   register: labelout
   changed_when: "'labeled' in labelout.stdout and 'not labeled' not in labelout.stdout"
   when: redeploy is not defined

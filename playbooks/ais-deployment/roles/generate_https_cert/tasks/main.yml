@@ -10,7 +10,7 @@
   command: "kubectl apply -f https_ca.yaml"
 
 - name: Delete existing cert if it exists
-  shell: kubectl delete secret {{ tls_secret }} -n ais --ignore-not-found
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 delete secret {{ tls_secret }} -n ais --ignore-not-found
 
 - name: Use CA to issue cert
   become: true

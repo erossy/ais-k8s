@@ -13,13 +13,13 @@
         kubectl patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupMetadata":false}}'
 
     - name: Check for stateStorageClass in AIS store specification
-      shell: kubectl get aistores -n {{ cluster }} ais -o jsonpath='{.spec.stateStorageClass}'
+      shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 get aistores -n {{ cluster }} ais -o jsonpath='{.spec.stateStorageClass}'
       register: state_storage_class
       changed_when: false
       when: delete_conf | default(false) | bool
 
     - name: Check for hostPathPrefix in AIS store specification
-      shell: kubectl get aistores -n {{ cluster }} ais -o jsonpath='{.spec.hostPathPrefix}'
+      shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 get aistores -n {{ cluster }} ais -o jsonpath='{.spec.hostPathPrefix}'
       register: host_path_prefix
       changed_when: false
       when: delete_conf | default(false) | bool

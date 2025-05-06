@@ -1,11 +1,11 @@
 ---
 - name: Delete user data if `cleanup_data` is true
-  shell: kubectl patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupData":true}}'
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupData":true}}'
   ignore_errors: true
   when: cleanup_data | default(false) | bool
 
 - name: Delete metadata if `cleanup_metadata` is true
-  shell: kubectl patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupMetadata":true}}'
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupMetadata":true}}'
   ignore_errors: true
   when: cleanup_metadata | default(false) | bool
 
@@ -31,7 +31,7 @@
     name: ais_delete_cluster
 
 - name: Delete specific PVs
-  shell: kubectl delete pv {{ item }}
+  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 delete pv {{ item }}
   loop: "{{ pvs_to_delete.stdout_lines }}"
   when: 
     - cleanup_metadata | default(false) | bool

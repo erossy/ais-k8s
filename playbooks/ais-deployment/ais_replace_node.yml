@@ -53,14 +53,14 @@
       when: target_pod is defined and proxy_pod is defined
 
     - name: Delete the PVCs for the target and proxy
-      shell: kubectl get pvc -n ais --no-headers | awk '/{{ target_pod }}|{{ proxy_pod }}/ {print $1}' | xargs kubectl delete pvc -n ais
+      shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 get pvc -n ais --no-headers | awk '/{{ target_pod }}|{{ proxy_pod }}/ {print $1}' | xargs kubectl delete pvc -n ais
       args:
         executable: /bin/bash
       register: delete_pvc_out
       changed_when: "'deleted' in delete_pvc_out.stdout"
 
     - name: Delete the PVs for the target and proxy
-      shell: kubectl get pv --no-headers | awk '/{{ target_pod }}|{{ proxy_pod }}/ {print $1}' | xargs kubectl delete pv
+      shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 get pv --no-headers | awk '/{{ target_pod }}|{{ proxy_pod }}/ {print $1}' | xargs kubectl delete pv
       args:
         executable: /bin/bash
       register: delete_pv_out
