@@ -3,8 +3,8 @@
   ansible.builtin.pause:
     prompt: "This playbook will overwrite the kubelet extra args configuration if it is running as a systemd service.
         Make sure the conf file in roles/config_kubelet_systemd/files has all of the extra args your kubelet service needs. 
-        Type 'yes' to continue"
-    register: user_confirm
+        Type 'yes' to continue"  
+  register: user_confirm
 
 - name: Copy kubelet-extra-args config drop-in file for the kubelet service
   ansible.builtin.copy:
