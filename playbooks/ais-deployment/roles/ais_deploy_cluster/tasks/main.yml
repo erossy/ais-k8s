@@ -31,7 +31,15 @@
     cluster: "{{ cluster }}"
     cluster_size: "{{ groups[cluster] | length }}"
 
+# Fetch the yaml file from the remote to jumphost
+- name: Copy cluster yaml to jumphost
+  fetch:
+    src: "/tmp/{{ cluster }}.yaml"
+    dest: "/tmp/{{ cluster }}.yaml"
+    flat: yes
+
 - name: Deploy cluster
   command: "kubectl apply -f /tmp/{{ cluster }}.yaml"
   register: createout
   changed_when: "'configured' in createout.stdout or 'created' in createout.stdout"
+  delegate_to: localhost

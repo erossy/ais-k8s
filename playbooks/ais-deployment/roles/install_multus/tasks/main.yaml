@@ -2,6 +2,7 @@
   shell: "kubectl get pods -n kube-system | grep -i 'multus.*running'"
   register: multus_pods_output
   ignore_errors: true
+  delegate_to: localhost
   
 - name: Set fact multus_running
   set_fact:
@@ -12,14 +13,16 @@
     msg: "Multus is {{ 'already' if multus_running else 'not' }} running. {{ 'Skipping install' if multus_running else 'Installing latest...' }}"
 
 - name: Install multus if necessary
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 apply -f "{{ multus_url }}"
+  shell: kubectl apply -f "{{ multus_url }}"
   when: not multus_running
+  delegate_to: localhost
 
 # https://github.com/k8snetworkplumbingwg/whereabouts
 - name: Check whereabouts installation
   shell: "kubectl get pods -n kube-system | grep -i 'whereabouts.*running'"
   register: whereabouts_pods_output
   ignore_errors: true
+  delegate_to: localhost
 
 - name: Set fact whereabouts_running
   set_fact:
@@ -35,3 +38,4 @@
     kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/whereabouts/master/doc/crds/whereabouts.cni.cncf.io_ippools.yaml
     kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/whereabouts/master/doc/crds/whereabouts.cni.cncf.io_overlappingrangeipreservations.yaml
   when: not whereabouts_running
+  delegate_to: localhost

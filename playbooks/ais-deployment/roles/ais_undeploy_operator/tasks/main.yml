@@ -6,7 +6,15 @@
     dest: "/tmp/"
     mode: 0777
 
+# Fetch the script to the jumphost
+- name: Copy undeploy-operator.sh to jumphost
+  fetch:
+    src: "/tmp/undeploy-operator.sh"
+    dest: "/tmp/undeploy-operator.sh"
+    flat: yes
+
 - name: Run undeploy operator scripts
   command: "/tmp/undeploy-operator.sh"
   register: undeployout
   changed_when: "'deleted' in undeployout.stdout"
+  delegate_to: localhost

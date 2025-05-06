@@ -24,14 +24,32 @@
     nodes: "{{ groups[cluster] | map('extract', hostvars, node_name) | join(' ') }}"
   when: new_node is not defined and node_name is defined
 
+# First, fetch create-pvs.sh script from the remote to the jumphost
+- name: Copy create-pvs.sh to jumphost
+  fetch:
+    src: "/tmp/create-pvs.sh"
+    dest: "/tmp/create-pvs.sh"
+    flat: yes
+  when: redeploy is not defined
+
+# Also fetch the template file
+- name: Copy pv.template.yaml to jumphost
+  fetch:
+    src: "/tmp/pv.template.yaml"
+    dest: "/tmp/pv.template.yaml"
+    flat: yes
+  when: redeploy is not defined
+
 - name: Label nodes
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 label nodes {{ nodes }} nvidia.com/ais-proxy="{{ cluster }}" nvidia.com/ais-target="{{ cluster }}"
+  shell: kubectl label nodes {{ nodes }} nvidia.com/ais-proxy="{{ cluster }}" nvidia.com/ais-target="{{ cluster }}"
   register: labelout
   changed_when: "'labeled' in labelout.stdout and 'not labeled' not in labelout.stdout"
   when: redeploy is not defined
+  delegate_to: localhost
 
 - name: Create PVs
   shell: "NAMESPACE={{ cluster }} MPATH_SIZE={{ ais_mpath_size }} MPATHS={{ ais_mpaths | join(' ') | quote }} NODES={{ nodes | quote }} TARGET_INDEX={{ target_index | default('0') }} /tmp/create-pvs.sh"
   register: createpvsout
   changed_when: "'configured' in createpvsout.stdout or 'created' in createpvsout.stdout"
   when: redeploy is not defined
+  delegate_to: localhost

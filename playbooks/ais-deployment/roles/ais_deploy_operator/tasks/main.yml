@@ -9,8 +9,17 @@
     dest: "/tmp/deploy-operator.sh"
     mode: "0755"
 
+# Fetch the script to the jumphost
+- name: Copy deploy-operator.sh to jumphost
+  fetch:
+    src: "/tmp/deploy-operator.sh"
+    dest: "/tmp/deploy-operator.sh"
+    flat: yes
+
 - name: Run deploy operator scripts
   shell: "/tmp/deploy-operator.sh"
+  delegate_to: localhost
 
 - name: Wait for operator to be in Running state
   shell: "kubectl wait --for=condition=available deployment/ais-operator-controller-manager -n ais-operator-system --timeout=5m"
+  delegate_to: localhost

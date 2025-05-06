@@ -6,7 +6,15 @@
     dest: "/tmp/delete_cluster.sh"
     mode: 0777
 
+# Fetch the script to the jumphost
+- name: Copy delete_cluster.sh to jumphost
+  fetch:
+    src: "/tmp/delete_cluster.sh"
+    dest: "/tmp/delete_cluster.sh"
+    flat: yes
+
 - name: Delete aistore cluster and wait till all pods get deleted
   shell: "/tmp/delete_cluster.sh"
   register: delete_cluster
   changed_when: "'configured' in delete_cluster.stdout or 'created' in delete_cluster.stdout"
+  delegate_to: localhost

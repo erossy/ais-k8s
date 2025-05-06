@@ -6,11 +6,20 @@
     mode: 0777
     lstrip_blocks: true
     
+# Fetch the YAML to jumphost
+- name: Copy https_ca.yaml to jumphost
+  fetch:
+    src: "https_ca.yaml"
+    dest: "/tmp/https_ca.yaml"
+    flat: yes
+
 - name: Create CA
-  command: "kubectl apply -f https_ca.yaml"
+  command: "kubectl apply -f /tmp/https_ca.yaml"
+  delegate_to: localhost
 
 - name: Delete existing cert if it exists
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 delete secret {{ tls_secret }} -n ais --ignore-not-found
+  shell: kubectl delete secret {{ tls_secret }} -n ais --ignore-not-found
+  delegate_to: localhost
 
 - name: Use CA to issue cert
   become: true
@@ -20,5 +29,13 @@
     mode: 0777
     lstrip_blocks: true
     
+# Fetch the YAML to jumphost
+- name: Copy https_cert.yaml to jumphost
+  fetch:
+    src: "https_cert.yaml"
+    dest: "/tmp/https_cert.yaml"
+    flat: yes
+    
 - name: Create Cert
-  command: "kubectl apply -f https_cert.yaml"
+  command: "kubectl apply -f /tmp/https_cert.yaml"
+  delegate_to: localhost

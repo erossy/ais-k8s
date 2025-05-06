@@ -30,6 +30,20 @@
     - "create-network-definition.sh"
     - "nad.template.yaml"
 
+# Fetch the files to jumphost
+- name: Copy network attachment script to jumphost
+  fetch:
+    src: "/tmp/create-network-definition.sh"
+    dest: "/tmp/create-network-definition.sh"
+    flat: yes
+
+- name: Copy network attachment template to jumphost
+  fetch:
+    src: "/tmp/nad.template.yaml"
+    dest: "/tmp/nad.template.yaml"
+    flat: yes
+
 - name: Apply network attachment definition
   shell: "NAMESPACE={{ attachment_namespace }} NAME={{ item.0 }} INTERFACE={{ item.1 }} /tmp/create-network-definition.sh"
   loop: "{{ attachment_list | zip(interface_list) | list }}"
+  delegate_to: localhost

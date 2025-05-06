@@ -1,13 +1,15 @@
 ---
 - name: Delete user data if `cleanup_data` is true
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupData":true}}'
+  shell: kubectl patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupData":true}}'
   ignore_errors: true
   when: cleanup_data | default(false) | bool
+  delegate_to: localhost
 
 - name: Delete metadata if `cleanup_metadata` is true
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupMetadata":true}}'
+  shell: kubectl patch aistores.ais.nvidia.com ais -n {{ cluster }} --type=merge -p '{"spec":{"cleanupMetadata":true}}'
   ignore_errors: true
   when: cleanup_metadata | default(false) | bool
+  delegate_to: localhost
 
 - name: Get node names of all pods {{ cluster }} namespace
   shell: >
@@ -15,6 +17,7 @@
   register: pod_node_names
   changed_when: false
   when: cleanup_metadata | default(false) | bool
+  delegate_to: localhost
 
 - name: List PVs to be deleted
   shell: |
@@ -25,19 +28,21 @@
   register: pvs_to_delete
   changed_when: false
   when: cleanup_metadata | default(false) | bool
+  delegate_to: localhost
 
 - name: Delete cluster
   import_role:
     name: ais_delete_cluster
 
 - name: Delete specific PVs
-  shell: kubectl --server=https://pu.mk8scluster-e00a57k7rk5jp2fv7v.mk8s.eu-north1.nebius.cloud:443 delete pv {{ item }}
+  shell: kubectl delete pv {{ item }}
   loop: "{{ pvs_to_delete.stdout_lines }}"
   when: 
     - cleanup_metadata | default(false) | bool
     - pvs_to_delete.stdout_lines | length > 0
   register: delete_pv_result
   changed_when: "'deleted' in delete_pv_result.stdout"
+  delegate_to: localhost
 
 - name: Convert node names to a list
   set_fact:
@@ -54,3 +59,4 @@
   when:
     - cleanup_metadata | default(false) | bool
     - node_name_list | length > 0
+  delegate_to: localhost
